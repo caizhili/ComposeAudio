@@ -27,7 +27,7 @@ public class Constant {
     public static final int LameBehaviorBitRate = 128;
 
     //混合后多少时间结束 秒
-    public static final int MusicCutEndOffset = 265;
+    public static final int MusicCutEndOffset = 45;
     //混合开始的时间点 秒
     public static final int MusicCutStartOffset = 1;
 

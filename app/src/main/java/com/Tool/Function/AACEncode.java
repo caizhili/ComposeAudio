@@ -175,7 +175,6 @@ public class AACEncode {
     //计算PTS，实际上这个pts对应音频来说作用并不大，设置成0也是没有问题的
     private long computePresentationTime(long frameIndex) {
         return frameIndex * 90000 * 1024 / 16000;
-//        return frameIndex * 32000 * 1024 / 16000;
     }
 }
 

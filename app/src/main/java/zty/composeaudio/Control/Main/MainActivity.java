@@ -21,12 +21,15 @@ import com.Tool.Global.Variable;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import zty.composeaudio.R;
 import zty.composeaudio.Tool.Interface.ComposeAudioInterface;
 import zty.composeaudio.Tool.Interface.DecodeOperateInterface;
 import zty.composeaudio.Tool.Interface.VoicePlayerInterface;
 import zty.composeaudio.Tool.Interface.VoiceRecorderOperateInterface;
+import zty.composeaudio.bean.RecordBean;
 
 public class MainActivity extends Activity
         implements VoicePlayerInterface, DecodeOperateInterface, ComposeAudioInterface, VoiceRecorderOperateInterface {
@@ -59,6 +62,9 @@ public class MainActivity extends Activity
     private ProgressBar composeProgressBar;
 
     private static MainActivity instance;
+
+    private static int currentPosition = 0;
+    private static int maxLength = 4;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -262,9 +268,9 @@ public class MainActivity extends Activity
         Log.d("ACETEST", "### duration: " + duration);
         player.release();//记得释放资源
         int i = (int) Math.floor(duration / 1000);
-//        AudioFunction.DecodeMusicFile(musicFileUrl, decodeFileUrl, 0,
-//                actualRecordTime + Constant.MusicCutEndOffset, this);
-        AudioFunction.DecodeMusicFile(musicFileUrl, decodeFileUrl, 0, i, this);
+        AudioFunction.DecodeMusicFile(musicFileUrl, decodeFileUrl, 0,
+                Constant.MusicCutStartOffset + Constant.MusicCutEndOffset, this);
+//        AudioFunction.DecodeMusicFile(musicFileUrl, decodeFileUrl, 0, i, this);
     }
 
     private void decodeAAC() {
@@ -358,9 +364,17 @@ public class MainActivity extends Activity
 //        AudioFunction.BeginComposeAudio(tempVoicePcmUrl, decodeFileUrl, composeVoiceUrl, false,
 //                Constant.VoiceWeight, Constant.VoiceBackgroundWeight,
 //                -1 * Constant.MusicCutStartOffset * Constant.RecordDataNumberInOneSecond, this);
-        AudioFunction.BeginComposeAudio(testPcmUrl, decodeFileUrl, composeVoiceUrl, composePcmUrl, false,
-                Constant.VoiceWeight, Constant.VoiceBackgroundWeight,
-                -1 * Constant.MusicCutStartOffset * Constant.RecordDataNumberInOneSecond, this);
+//        AudioFunction.BeginComposeAudio(testPcmUrl, decodeFileUrl, composeVoiceUrl, composePcmUrl, false,
+//                Constant.VoiceWeight, Constant.VoiceBackgroundWeight,
+//                -1 * Constant.MusicCutStartOffset * Constant.RecordDataNumberInOneSecond, this);
+        List<RecordBean> recordBeans = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            RecordBean recordBean = new RecordBean();
+            recordBean.path = testPcmUrl;
+            recordBean.start_time = (i + 1) * 4;
+            recordBeans.add(recordBean);
+        }
+        AudioFunction.ComposeAudioList(recordBeans, decodeFileUrl, composeVoiceUrl, composePcmUrl, Constant.VoiceWeight, Constant.VoiceBackgroundWeight, this);
     }
 
     @Override
@@ -392,6 +406,14 @@ public class MainActivity extends Activity
         composeProgressBar.setVisibility(View.GONE);
 
         CommonFunction.showToast("合成成功", className);
+
+//        if (currentPosition < maxLength) {
+        //TODO 生成的路径不能是合成中的路径
+//            currentPosition++;
+//            AudioFunction.BeginComposeAudio(testPcmUrl, composePcmUrl, composeVoiceUrl, composePcmUrl, false,
+//                    Constant.VoiceWeight, Constant.VoiceBackgroundWeight,
+//                    -currentPosition * 3 * Constant.MusicCutStartOffset * Constant.RecordDataNumberInOneSecond, this);
+//        }
     }
 
     @Override
